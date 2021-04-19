@@ -1,0 +1,10 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+message ELG_Parameter{
+    int32 ServiceID = 1;
+}
+
+service Transfer_ELG_Parameter{
+    rpc get_ServcieID(google.protobuf.Empty) returns(ELG_Parameter);
+}

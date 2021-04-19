@@ -1,0 +1,20 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+message ELG_Text {
+    string PlainText = 1;
+    string StructuredText = 2;
+}
+
+message ELG_Parameter {
+    int32 ServiceID = 1;
+}   
+
+message Empty {
+    
+}
+
+service RunElgService {
+    rpc InitParameter(ELG_Parameter) returns (google.protobuf.Empty);
+    rpc RunElgService(ELG_Text) returns(ELG_Text);
+}

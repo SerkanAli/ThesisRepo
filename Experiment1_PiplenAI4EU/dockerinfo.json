@@ -1,0 +1,1 @@
+{"docker_info_list":[{"container_name":"audioFileBroker1","ip_address":"audioFileBroker1","port":"8556"},{"container_name":"SegmentationModel1","ip_address":"SegmentationModel1","port":"8556"},{"container_name":"AudioToText1","ip_address":"AudioToText1","port":"8556"},{"container_name":"modelconnector","ip_address":"modelconnector","port":"8555"}]}

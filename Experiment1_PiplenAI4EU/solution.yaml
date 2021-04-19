@@ -1,0 +1,169 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: acumos
+  name: audioFileBroker1
+spec:
+  selector:
+    app: audioFileBroker1
+  type: ClusterIP
+  ports:
+  - name: protobuf-api
+    port: 8556
+    targetPort: 3330
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: acumos
+  name: audioFileBroker1
+  labels:
+    app: audioFileBroker1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audioFileBroker1
+  template:
+    metadata:
+      labels:
+        app: audioFileBroker1
+    spec:
+      imagePullSecrets:
+      - name: acumos-registry
+      containers:
+      - name: audioFileBroker1
+        image: acumos-dev-fhg.ai4eu.eu:30102/https:
+        ports:
+        - name: protobuf-api
+          containerPort: 3330
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: acumos
+  name: SegmentationModel1
+spec:
+  selector:
+    app: SegmentationModel1
+  type: ClusterIP
+  ports:
+  - name: protobuf-api
+    port: 8556
+    targetPort: 3330
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: acumos
+  name: SegmentationModel1
+  labels:
+    app: SegmentationModel1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: SegmentationModel1
+  template:
+    metadata:
+      labels:
+        app: SegmentationModel1
+    spec:
+      imagePullSecrets:
+      - name: acumos-registry
+      containers:
+      - name: SegmentationModel1
+        image: acumos-dev-fhg.ai4eu.eu:30102/https:
+        ports:
+        - name: protobuf-api
+          containerPort: 3330
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: acumos
+  name: AudioToText1
+spec:
+  selector:
+    app: AudioToText1
+  type: ClusterIP
+  ports:
+  - name: protobuf-api
+    port: 8556
+    targetPort: 3330
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: acumos
+  name: AudioToText1
+  labels:
+    app: AudioToText1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: AudioToText1
+  template:
+    metadata:
+      labels:
+        app: AudioToText1
+    spec:
+      imagePullSecrets:
+      - name: acumos-registry
+      containers:
+      - name: AudioToText1
+        image: acumos-dev-fhg.ai4eu.eu:30102/https:
+        ports:
+        - name: protobuf-api
+          containerPort: 3330
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: acumos
+  name: modelconnector
+spec:
+  selector:
+    app: modelconnector
+  type: NodePort
+  ports:
+  - name: mc-api
+    nodePort: 30555
+    port: 8555
+    targetPort: 8555
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: acumos
+  name: modelconnector
+  labels:
+    app: modelconnector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: modelconnector
+  template:
+    metadata:
+      labels:
+        app: modelconnector
+    spec:
+      imagePullSecrets:
+      - name: acumos-registry
+      containers:
+      - name: modelconnector
+        image: nexus3.acumos.org:10002/blueprint-orchestrator:2.0.13
+        ports:
+        - name: mc-api
+          containerPort: 8555
+        volumeMounts:
+        - mountPath: /logs
+          name: logs
+      restartPolicy: Always
+      volumes:
+      - name: logs
+        hostPath:
+          path: /var/acumos/log

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package proto;
+
+message Message {
+  string Content = 1;
+}
+
+service ELGService {
+  rpc ProcessMsg(Message) returns(Message);
+}

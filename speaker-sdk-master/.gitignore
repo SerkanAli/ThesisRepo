@@ -1,0 +1,7 @@
+env
+.vscode
+__pycache__
+speaker_sdk.egg-info
+examples/certs/*
+!examples/certs/.gitkeep
+!examples/certs/server.crt

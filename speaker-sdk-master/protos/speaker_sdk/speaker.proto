@@ -1,0 +1,251 @@
+syntax = "proto3";
+package speaker.beta2;
+
+import "google/protobuf/struct.proto";
+
+/**
+ * The audio format that is used for the transmitted audio.
+ */
+message AudioFormat {
+    /**
+     * This field describes the encoding of the incoming or outgoing audio data for the respective request.
+     */
+    enum Encoding {
+        AUDIO_FORMAT_UNSPECIFIED = 0;   // Field not set
+        PCM16 = 1;      // Raw audio data stream as signed 16-bit integer, little endian
+        WAV = 2;        // RIFF WAVE
+        FLAC = 3;       // Free Lossless Audio Codec (https://xiph.org/flac/)
+    }
+
+    Encoding encoding = 1;  // Desired or provided audio encoding
+    uint32 samplerate = 2;  // If the encoding is PCM16 this field has to be set to the samplerate used to record the signal; otherwise this field will be ignored
+}
+
+/**
+ * Request to transcribe an audio recording of the user.
+ *
+ * **Note:** Only one of the fields `config` or `audio` may be set at a time.
+ * The first message has to contain the `config` field and all subsequent
+ * messages have to contain the `audio` field.
+ */
+message SpeechRecognitionRequest {
+    message Config {
+        string language = 1;            // The language with which the recognition should be performed
+        string flavor = 2;              // (Optional) This field is intended for selecting a specialized language model, e.g. to better recognize technical terms
+
+        AudioFormat audio_format = 3;   // Format in which the audio data will be encoded
+        bool intermediate_results = 4;  // True, if intermediate transcription results should be returned
+        bool multiple_utterances = 5;   // True, if more than one user utterance should be transcribed; on False the recognizer will not transcribe anything after the first utterance is finished
+
+        bool debug = 15;                // True, if debug information for this request should also be returned
+    }
+
+    oneof input {
+        Config config = 1;  // Speech recognizer configuration
+        bytes audio = 2;    // Audio data
+    }
+}
+
+/**
+ * Transcribed text from the user's utterance
+ */
+message Transcript {
+    // The word alignment describes the confidence, position and length of a recognized word
+    message WordAlignment {
+        string word = 1;        // A single word from the transcript (in order of appearance)
+        float confidence = 2;   // The confidence score for the recognition of this word (between 0 and 1)
+        float start = 3;        // Start offset of word within the audio recording (in seconds)
+        float length = 4;       // Length of the word within the audio recording (in seconds)
+        string original_transcript = 5;     // The transcript hypothesis this word originated from
+    }
+
+    string text = 1;                            // Transcription of the recording
+    bool utterance_finished = 2;                // Flag indicating whether this is the final recognition result
+    repeated WordAlignment word_alignment = 3;  // A list of word WordAlignment messages for each word transcribed
+
+    google.protobuf.Struct debug_info = 15;     // Debug information needed to reconstruct the request in case of an error.
+}
+
+/**
+ * This service provides an interface for recognizing and transcribing speech
+ * which has been recorded from the user.
+ */
+service SpeechRecognition {
+    // Transcribe the passed audio stream
+    rpc transcribe (stream SpeechRecognitionRequest) returns (stream Transcript);
+}
+
+/**
+ * A request containing a textual query from the user or an event which should
+ * be processed by the dialogue manager.
+ * The last state to continue from is provided in the `tracker` field.
+ *
+ * **Note:** Only one of the fields `text` or `event` may be set at a time.
+ */
+message DialogueRequest {
+    string key = 1;         // A key for selecting the desired dialogue manager
+    bytes tracker = 2;      // The last dialog state from the previous call. If this is the first call, this field must be left empty.
+    string sender_id = 3;   // UUID for identifying the user
+
+    oneof text_or_event {
+        string text = 4;                    // Textual query from the user
+        google.protobuf.Struct event = 5;   // A client-specific event
+    }
+
+    bool debug = 15;        // True, if debug information for this request should also be returned
+}
+
+/**
+ * The response to the DialogueRequest which in any case contains the current dialogue state
+ * (`tracker`), possibly a list of replies (`text`) and events, and a flag indicating whether the
+ * dialogue manager expects the conversation to continue.
+ */
+message DialogueResponse {
+    message EventOut {  // Wrapper message to enable a list of oneofs.
+        oneof text_or_event {
+            string text = 1;                    // textual reply to the request
+            google.protobuf.Struct event = 2;   // A client-specific event triggered by the request
+        }
+    }
+
+    bytes tracker = 1;              // dialogue state after processing the current request
+    repeated EventOut events = 2;   // An list of textual replies and custom events
+    bool follow_up = 3;             // true, if the service expects further input from the user
+
+    google.protobuf.Struct debug_info = 15;     // Debug information needed to reconstruct the request in case of an error.
+}
+
+/**
+ * This service handles incoming textual queries from the user or possibly
+ * other events which may be triggered by some devices.
+ */
+service DialogueManager {
+    // Predict a response to the user input.
+    rpc handle (DialogueRequest) returns (DialogueResponse);
+}
+
+/**
+ * A request to synthesize a given text as spoken language.
+ */
+message TtsRequest {
+    string text = 1;                // The utterance to be synthesized.
+    string language = 2;            // The desired language in which the utterance is to be synthesized.
+    string voice = 3;               // (Optional) The name of the voice; if not given the service will choose the language default.
+    AudioFormat audio_format = 4;   // The desired audio data format in which the synthesized speech is to be returned.
+    float speech_rate = 5;          // Speed rate of the synthesized speech; if unset (0.0) it will default to 1.0 which is the regular speed. Values above 1.0 will result in faster pace, vice vera for values below.
+
+    bool debug = 15;                // True, if debug information for this request should also be returned
+}
+
+/**
+ * The synthesized speech; may be a stream of these messages.
+ */
+message SynthesizedSpeech {
+    bytes audio = 1;    // synthesized speech
+
+    google.protobuf.Struct debug_info = 15;     // Debug information needed to reconstruct the request in case of an error.
+}
+
+/**
+ * This service synthesizes speech from a given text.
+ */
+service TextToSpeech {
+    // Synthesize the given text as natural language
+    rpc synthesize (TtsRequest) returns (stream SynthesizedSpeech);
+}
+
+/**
+ * The audio configuration and internal state of the dialogue manager.
+ *
+ * **Note:** Only one of the fields `audio_in` or `text_query` may be set at a time.
+ */
+message AssistantConfig {
+    string key = 1;                 // API key which selects the components to be used (e.g. German speech recognizer, dialogue manager for providing horoscopes and a female German speech synthesizer)
+    oneof query {
+        AudioFormat audio_in = 2;   // Configuration of incoming audio
+        string text_query = 3;      // textual query from the user; if a query is provided here no further messages will be processed but this query is directly passed to the dialogue manager.
+    }
+    AudioFormat audio_out = 4;      // Desired configuration of the outgoing audio.
+    bytes tracker = 5;              // Dialogue state (see same field in `DialogueRequest`)
+
+    bool debug = 15;                // True, if debug information for this request should also be returned
+}
+
+/**
+ * The top-level message which is sent as a stream from the client to the
+ * server.
+ *
+ * **Note:** Only one of the fields `config` or `audio_in` may be set at a time.
+ * The first message has to contain the `config` field and all subsequent
+ * messages have to contain the `audio_in` field.
+ */
+message AssistantRequest {
+    oneof assist_oneof {
+        AssistantConfig config = 1; // The assistant's configuration for this request
+        bytes audio_in = 2;         // Audio recording of user's query
+    }
+}
+
+/**
+ * The top-level message which is returned by the server.
+ * One or more of these messages are sent to the client as a response, although only individual
+ * fields may be set.
+ */
+message AssistantResponse {
+    // This enum describes the possible continuation of the dialogue.
+    enum FollowUp {
+        FOLLOW_UP_UNSPECIFIED = 0;  // Field not set
+        EXPECT_SPEECH = 1;          // The system expects a subsequent response from the user, i.e. the client should continue to record the user's utterances.
+        DIALOGUE_FINISHED = 2;      // From the point of view of the assistant, the conversation is over, i.e. the client can stop recording and wait for the next keyword, for example.
+    }
+
+    bytes speech = 1;               // Synthesized reponse of the assistant
+    string reply = 2;               // Textual reply of the assistant
+
+    string transcript = 3;          // Transcription of the user from the recording
+    bool stop_recording = 4;        // True, if the client should stop sending audio chunks since the speech recognizer has determined that the user's utterance has finished
+
+    repeated google.protobuf.Struct events = 5;   // A list of client-specific events triggered by the request (see same field in message `DialogueResponse`)
+    FollowUp follow_up = 6;         // Flag indicating whether the assistant expects further input from the user
+    bytes tracker = 7;              // Dialogue state after processing the current request
+    
+    string html = 12;                // A visual response in form of a HTML5 document
+
+    google.protobuf.Struct debug_info = 15;     // Debug information needed to reconstruct the request in case of an error.
+}
+
+// This is the voice assistant service which provides a single interface to conveniently access all
+// the other services during a conversation with the user. It bundles all three regular calls of a
+// voice interaction, to the speech recognizer, the dialogue manager and the speech synthesizer,
+// into one call.
+//
+// Each call represents a single turn in the conversation between the user and the voice assistant
+// and consists of one or more streamed requests and responses between client and server.
+//
+// #### Examples
+//
+// This is an example for one turn using the full voice assistant, i.e. sending audio in and
+// receiving audio back:
+// * [IN] AssistantRequest.config
+// * [IN] AssistantRequest.audio_in
+// * [IN] AssistantRequest.audio_in
+// * [OUT] AssistantResponse.transcript
+// * [IN] AssistantRequest.audio_in
+// * [IN] AssistantRequest.audio_in
+// * [OUT] AssistantResponse.transcript
+// * [OUT] AssistantResponse.response
+// * [OUT] AssistantResponse.events
+// * [OUT] AssistantResponse.speech
+// * [OUT] AssistantResponse.speech
+// * [OUT] AssistantResponse.speech
+//
+// Also a chatbot behaviour can be configured if the `AssistantConfig.text_query` field is set and
+// no `audio_out` configuration is provided:
+//
+// * [IN] AssistantRequest.config
+// * [OUT] AssistantResponse.response
+// * [OUT] AssistantResponse.events
+service VoiceAssistant {
+    // This is a convenience function for interacting with the speech assistant.
+    rpc assist (stream AssistantRequest) returns (stream AssistantResponse);
+}
