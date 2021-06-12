@@ -11,7 +11,6 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,9 +19,8 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x10\x64\x61tabroker.proto\x1a\x1bgoogle/protobuf/empty.proto\"5\n\x08\x45LG_Text\x12\x11\n\tPlainText\x18\x01 \x01(\t\x12\x16\n\x0eStructuredText\x18\x02 \x01(\t2B\n\x11Transfer_ELG_Text\x12-\n\x08get_Text\x12\x16.google.protobuf.Empty\x1a\t.ELG_Textb\x06proto3'
-  ,
-  dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
+  serialized_pb=b'\n\x10\x64\x61tabroker.proto\"5\n\x08\x45LG_Text\x12\x11\n\tPlainText\x18\x01 \x01(\t\x12\x16\n\x0eStructuredText\x18\x02 \x01(\t\"\x07\n\x05\x45mpty22\n\x11Transfer_ELG_Text\x12\x1d\n\x08get_Text\x12\x06.Empty\x1a\t.ELG_Textb\x06proto3'
+)
 
 
 
@@ -61,11 +59,37 @@ _ELG_TEXT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=49,
-  serialized_end=102,
+  serialized_start=20,
+  serialized_end=73,
+)
+
+
+_EMPTY = _descriptor.Descriptor(
+  name='Empty',
+  full_name='Empty',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=75,
+  serialized_end=82,
 )
 
 DESCRIPTOR.message_types_by_name['ELG_Text'] = _ELG_TEXT
+DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ELG_Text = _reflection.GeneratedProtocolMessageType('ELG_Text', (_message.Message,), {
@@ -74,6 +98,13 @@ ELG_Text = _reflection.GeneratedProtocolMessageType('ELG_Text', (_message.Messag
   # @@protoc_insertion_point(class_scope:ELG_Text)
   })
 _sym_db.RegisterMessage(ELG_Text)
+
+Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), {
+  'DESCRIPTOR' : _EMPTY,
+  '__module__' : 'databroker_pb2'
+  # @@protoc_insertion_point(class_scope:Empty)
+  })
+_sym_db.RegisterMessage(Empty)
 
 
 
@@ -84,15 +115,15 @@ _TRANSFER_ELG_TEXT = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=104,
-  serialized_end=170,
+  serialized_start=84,
+  serialized_end=134,
   methods=[
   _descriptor.MethodDescriptor(
     name='get_Text',
     full_name='Transfer_ELG_Text.get_Text',
     index=0,
     containing_service=None,
-    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    input_type=_EMPTY,
     output_type=_ELG_TEXT,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,

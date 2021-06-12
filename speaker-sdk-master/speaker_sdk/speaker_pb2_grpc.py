@@ -160,7 +160,7 @@ class TextToSpeechStub(object):
         """
         self.synthesize = channel.unary_stream(
                 '/speaker.beta2.TextToSpeech/synthesize',
-                request_serializer=speaker__sdk_dot_speaker__pb2.TtsRequest.SerializeToString,
+                request_serializer=speaker__sdk_dot_speaker__pb2.TextToSpeechRequest.SerializeToString,
                 response_deserializer=speaker__sdk_dot_speaker__pb2.SynthesizedSpeech.FromString,
                 )
 
@@ -182,7 +182,7 @@ def add_TextToSpeechServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'synthesize': grpc.unary_stream_rpc_method_handler(
                     servicer.synthesize,
-                    request_deserializer=speaker__sdk_dot_speaker__pb2.TtsRequest.FromString,
+                    request_deserializer=speaker__sdk_dot_speaker__pb2.TextToSpeechRequest.FromString,
                     response_serializer=speaker__sdk_dot_speaker__pb2.SynthesizedSpeech.SerializeToString,
             ),
     }
@@ -209,7 +209,7 @@ class TextToSpeech(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/speaker.beta2.TextToSpeech/synthesize',
-            speaker__sdk_dot_speaker__pb2.TtsRequest.SerializeToString,
+            speaker__sdk_dot_speaker__pb2.TextToSpeechRequest.SerializeToString,
             speaker__sdk_dot_speaker__pb2.SynthesizedSpeech.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

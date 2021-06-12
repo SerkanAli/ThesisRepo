@@ -1,0 +1,5 @@
+def service_*ID*(self, response):
+        text = ''
+        for data in response.annotations["*annotations*"]:
+              text = text +  data.features["*features*"]
+        return text

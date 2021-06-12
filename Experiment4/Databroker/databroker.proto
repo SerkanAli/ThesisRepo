@@ -1,12 +1,15 @@
 syntax = "proto3";
-import "google/protobuf/empty.proto";
 
-message ELG_Text{
+message ELG_Text {
     string PlainText = 1;
     string StructuredText = 2;
 }
 
+message Empty {
 
-service Transfer_ELG_Text{
-    rpc get_Text(google.protobuf.Empty) returns(ELG_Text);
+}
+
+
+service Transfer_ELG_Text {
+    rpc get_Text(Empty) returns(ELG_Text);
 }

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+message ELG_Protocol {
+    int32 BeforeServiceID = 1;
+    int32 CurrentServiceID = 2;
+    repeated int32 AfterServicesIDs = 3;
+}
+
+message ELG_Text {
+    string PlainText = 1;
+    string StructuredText = 2;
+    ELG_Protocol Protocol = 3;
+}
+
+message Empty {
+
+}
+
+
+service Transfer_ELG_Text {
+    rpc get_Text(Empty) returns(ELG_Text);
+}

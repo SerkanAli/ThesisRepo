@@ -5,13 +5,13 @@ import time
 import databroker_pb2
 import databroker_pb2_grpc
 
-port = 50080
+port = 8061
 
 
 class Transfer_ELG_TextServicer(databroker_pb2_grpc.Transfer_ELG_TextServicer):
     def get_Text(self, request, context):
         response = databroker_pb2.ELG_Text()
-        response.PlainText = "Hello World!"
+        response.PlainText = 'Hello World. How are you today and what are you doing tomorrow?'
         print(response)
         return response
 

@@ -4,8 +4,8 @@ import modelTextoText_pb2_grpc
 from google.protobuf import empty_pb2
 
 
-def RunService(PlainText, ServiceID):
-    port_Service = 'localhost:50082'
+def RunServiceWithParameter(PlainText, ServiceID):
+    port_Service = 'localhost:8061'
     channel_Service = grpc.insecure_channel(port_Service)
     stub_Service = modelTextoText_pb2_grpc.RunElgServiceStub(channel_Service)
 
@@ -18,5 +18,7 @@ def RunService(PlainText, ServiceID):
     response_Service = stub_Service.RunElgService(request_Text)
     print('Response from Service:', response_Service)
     return response_Service
+    
 
-RunService('Hello World. How are you today?', 515)
+
+RunServiceWithParameter('How about today?', -1) 

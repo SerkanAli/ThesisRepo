@@ -78,7 +78,8 @@ class AsrMockup(SpeechRecognitionServicer):
             config = request.config
         else:
             raise aio.AioRpcError(
-                grpc.StatusCode.INVALID_ARGUMENT, "First message has to contain the config field",
+                grpc.StatusCode.INVALID_ARGUMENT,
+                "First message has to contain the config field",
             )
 
         if config.language not in self.SUPPORTED_LANGUAGES:
@@ -157,7 +158,11 @@ class TtsMockup(TextToSpeechServicer):
         """
         audio_src, samplerate_orig = sf.read(os.path.join(self.CACHE_PATH, "hello.wav"))
 
-        audio = samplerate.resample(audio_src, request.audio_format.samplerate/float(samplerate_orig), "sinc_best")
+        audio = samplerate.resample(
+            audio_src,
+            request.audio_format.samplerate / float(samplerate_orig),
+            "sinc_best",
+        )
         bio = BytesIO()
         sf.write(
             bio,
@@ -184,7 +189,10 @@ def exit_gracefully(signum, frame) -> None:
 
 @click.command()
 @click.option(
-    "--port", default=DEFAULT_PORT, show_default=True, help="Port to listen for incoming requests"
+    "--port",
+    default=DEFAULT_PORT,
+    show_default=True,
+    help="Port to listen for incoming requests",
 )
 def start(port: int) -> None:
     """
@@ -225,7 +233,8 @@ async def run(server, stop_event: asyncio.Event) -> None:
 
     await server.start()
     await asyncio.wait(
-        {server.wait_for_termination(), stop_event.wait()}, return_when=asyncio.FIRST_COMPLETED,
+        {server.wait_for_termination(), stop_event.wait()},
+        return_when=asyncio.FIRST_COMPLETED,
     )
     await server.stop(grace=0)
 

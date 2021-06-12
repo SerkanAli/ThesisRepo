@@ -31,7 +31,6 @@ message AudioFormat {
 message SpeechRecognitionRequest {
     message Config {
         string language = 1;            // The language with which the recognition should be performed
-        string flavor = 2;              // (Optional) This field is intended for selecting a specialized language model, e.g. to better recognize technical terms
 
         AudioFormat audio_format = 3;   // Format in which the audio data will be encoded
         bool intermediate_results = 4;  // True, if intermediate transcription results should be returned
@@ -56,12 +55,12 @@ message Transcript {
         float confidence = 2;   // The confidence score for the recognition of this word (between 0 and 1)
         float start = 3;        // Start offset of word within the audio recording (in seconds)
         float length = 4;       // Length of the word within the audio recording (in seconds)
-        string original_transcript = 5;     // The transcript hypothesis this word originated from
     }
 
     string text = 1;                            // Transcription of the recording
     bool utterance_finished = 2;                // Flag indicating whether this is the final recognition result
     repeated WordAlignment word_alignment = 3;  // A list of word WordAlignment messages for each word transcribed
+    string original_transcript = 4;             // The transcript hypothesis before post-processing
 
     google.protobuf.Struct debug_info = 15;     // Debug information needed to reconstruct the request in case of an error.
 }
@@ -83,9 +82,7 @@ service SpeechRecognition {
  * **Note:** Only one of the fields `text` or `event` may be set at a time.
  */
 message DialogueRequest {
-    string key = 1;         // A key for selecting the desired dialogue manager
-    bytes tracker = 2;      // The last dialog state from the previous call. If this is the first call, this field must be left empty.
-    string sender_id = 3;   // UUID for identifying the user
+    bytes tracker = 2;      // The last dialogue state from the previous call. If this is the first call, this field must be left empty.
 
     oneof text_or_event {
         string text = 4;                    // Textual query from the user
@@ -127,7 +124,7 @@ service DialogueManager {
 /**
  * A request to synthesize a given text as spoken language.
  */
-message TtsRequest {
+message TextToSpeechRequest {
     string text = 1;                // The utterance to be synthesized.
     string language = 2;            // The desired language in which the utterance is to be synthesized.
     string voice = 3;               // (Optional) The name of the voice; if not given the service will choose the language default.
@@ -151,7 +148,7 @@ message SynthesizedSpeech {
  */
 service TextToSpeech {
     // Synthesize the given text as natural language
-    rpc synthesize (TtsRequest) returns (stream SynthesizedSpeech);
+    rpc synthesize (TextToSpeechRequest) returns (stream SynthesizedSpeech);
 }
 
 /**
@@ -208,7 +205,7 @@ message AssistantResponse {
     repeated google.protobuf.Struct events = 5;   // A list of client-specific events triggered by the request (see same field in message `DialogueResponse`)
     FollowUp follow_up = 6;         // Flag indicating whether the assistant expects further input from the user
     bytes tracker = 7;              // Dialogue state after processing the current request
-    
+
     string html = 12;                // A visual response in form of a HTML5 document
 
     google.protobuf.Struct debug_info = 15;     // Debug information needed to reconstruct the request in case of an error.

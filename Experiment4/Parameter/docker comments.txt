@@ -1,0 +1,12 @@
+#build proto
+python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. parameter.proto
+
+
+#build docker
+docker build -t elgparameter:v1 .
+docker run -d -p 50081:50081 elgparameter:v1
+
+
+#push do docker hub
+docker tag 379e58e7432d serkanali/elgservicetexttotext:parameter
+docker push serkanali/elgservicetexttotext:parameter

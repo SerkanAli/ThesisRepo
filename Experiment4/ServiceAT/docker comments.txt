@@ -1,0 +1,11 @@
+//Here to build the proto
+python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. modelAudioToText.proto
+
+// Here to build the docker
+docker build -t elgserviceaudiototext:v1 .
+docker run -d -p 50084:50084 elgserviceaudiototext:v1
+
+
+#push do docker hub
+docker tag c60d64c33cd5 serkanali/elgservicetexttotext:audiototext
+docker push serkanali/elgservicetexttotext:audiototext

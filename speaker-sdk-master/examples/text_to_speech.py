@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 # ***************************************************************************
 #
 #                  (C) Copyright Fraunhofer IIS 2020
@@ -10,8 +12,6 @@
 #   maximum extent possible under law.
 #
 # ***************************************************************************
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 from getpass import getpass
 from io import BytesIO
 from pathlib import Path
@@ -25,16 +25,17 @@ import grpc
 import numpy as np
 import sounddevice as sd
 import soundfile as sf
+import sys
 from google.protobuf.json_format import MessageToDict
-from keycloak_login import KeyCloak
-from speaker_sdk.speaker_pb2 import AudioFormat, TtsRequest
+from keycloak_login import KeyCloak, PersistentAccessToken
+from speaker_sdk.speaker_pb2 import AudioFormat, TextToSpeechRequest
 from speaker_sdk.speaker_pb2_grpc import TextToSpeechStub
 
 DEFAULT_SPEECH = "Hello. I'm a virtual assistant.".split()
-DEFAULT_HOST = "localhost:8000"
-DEFAULT_LANGUAGE = "en-US"
+DEFAULT_HOST = "api.speaker-plattform.de"
+DEFAULT_LANGUAGE = "de-DE"
 DEFAULT_SAMPLERATE = 16000
-DEFAULT_FORMAT = "pcm"
+DEFAULT_FORMAT = "wav"
 AUDIO_FORMATS = {
     "pcm": AudioFormat.Encoding.PCM16,
     "wav": AudioFormat.Encoding.WAV,
@@ -70,7 +71,9 @@ class AudioFifo(Queue):
             chunk, np.ndarray
         ), f"chunk should be a numpy.ndarray but got {type(chunk)}"
         assert chunk.dtype == np.int16, "chunk dtype should be int16"
-        assert chunk.ndim == 1 or chunk.shape[1] == 1, "Currently only mono signals are supported"
+        assert (
+            chunk.ndim == 1 or chunk.shape[1] == 1
+        ), "Currently only mono signals are supported"
 
         if chunk.ndim == 1:
             # Reshape 1-dim signal to 2-dim
@@ -125,7 +128,10 @@ def callback(outdata: np.ndarray, frames: int, time, status: sd.CallbackFlags) -
 
 @click.command()
 @click.option(
-    "--host", default=DEFAULT_HOST, show_default=True, help="Hostname of the text-to-speech server"
+    "--host",
+    default=DEFAULT_HOST,
+    show_default=True,
+    help="Hostname of the text-to-speech server",
 )
 @click.option("--out", type=str, help="Save synthesized speech to file")
 @click.option(
@@ -135,7 +141,9 @@ def callback(outdata: np.ndarray, frames: int, time, status: sd.CallbackFlags) -
     show_default=True,
     help="Desired encoding of synthesized speech",
 )
-@click.option("--language", default=DEFAULT_LANGUAGE, show_default=True, help="Speech language")
+@click.option(
+    "--language", default=DEFAULT_LANGUAGE, show_default=True, help="Speech language"
+)
 @click.option(
     "--samplerate",
     default=DEFAULT_SAMPLERATE,
@@ -144,13 +152,24 @@ def callback(outdata: np.ndarray, frames: int, time, status: sd.CallbackFlags) -
     help="Desired sampling rate of synthesized speech",
 )
 @click.option(
+    "--speech-rate",
+    default=1.0,
+    type=float,
+    show_default=True,
+    help="Desired speech rate (pace) of synthesized speech",
+)
+@click.option(
     "--jwt-file",
-    default=None,
+    default=Path("certs", "login_data.json"),
     type=click.Path(),
     help="Specify file containing a valid JWT token.",
 )
 @click.option(
-    "-u", "--username", default=None, type=str, help="Username for authentication via KeyCloak"
+    "-u",
+    "--username",
+    default=None,
+    type=str,
+    help="Username for authentication via KeyCloak",
 )
 @click.option(
     "-p",
@@ -160,37 +179,33 @@ def callback(outdata: np.ndarray, frames: int, time, status: sd.CallbackFlags) -
     help="Password for authentication via KeyCloak. User will be prompted if --user flag was provided but --password was not.",
 )
 @click.option(
-    "--insecure", is_flag=True, help="Accept insecure (unencrypted) incoming connections"
+    "--insecure",
+    is_flag=True,
+    help="Accept insecure (unencrypted) incoming connections",
 )
 @click.option(
-    "--auth_host",
-    default="https://speaker-keycloak.185.128.119.217.xip.io",
+    "--auth-host",
+    default="https://www.speaker-plattform.de",
     type=str,
     help="Host of the authentication server.",
 )
 @click.option(
     "--cert",
-    type=click.Path(),
-    default=Path("certs", "server.crt"),
+    type=str,
+    default=None,
     show_default=True,
     help="Location of certificate file",
 )
 @click.option(
-    "--namespace",
-    default=None,
-    type=str,
-    help="Namespace used for direct routing.")
+    "--namespace", default=None, type=str, help="Namespace used for direct routing."
+)
 @click.option(
     "--service",
     default=None,
     type=str,
-    help="Name of the service used for direct routing."
+    help="Name of the service used for direct routing.",
 )
-@click.option(
-    "--port",
-    default="80",
-    type=str,
-    help="Port used for direct routing.")
+@click.option("--port", default="80", type=str, help="Port used for direct routing.")
 @click.option("--debug", is_flag=True, help="Request debug information from service")
 @click.argument("speech", nargs=-1, type=str)
 def text_to_speech(
@@ -199,15 +214,16 @@ def text_to_speech(
     format: Text,
     language: Text,
     samplerate: int,
-    jwt_file: str,
-    username: str,
-    password: str,
+    speech_rate: float,
+    jwt_file: Text,
+    username: Text,
+    password: Text,
     insecure: bool,
-    auth_host: str,
-    cert: str,
-    namespace: str,
-    service: str,
-    port: str,
+    auth_host: Text,
+    cert: Optional[Text],
+    namespace: Text,
+    service: Text,
+    port: Text,
     debug: bool,
     speech: Tuple[Text],
 ) -> None:
@@ -239,28 +255,29 @@ def text_to_speech(
     audio = b""  # buffer where the audio data is collected
 
     if insecure:
-        channel = grpc.insecure_channel(host)
+        grpc_channel = grpc.insecure_channel(host)
     else:
-        with open(cert, "rb") as f:
-            creds = grpc.ssl_channel_credentials(f.read())
-        channel = grpc.secure_channel(host, creds)
+        if cert:
+            with open(cert, "rb") as f:
+                creds = grpc.ssl_channel_credentials(f.read())
+        else:
+            creds = grpc.ssl_channel_credentials()
 
-    access_token = ""
+        grpc_channel = grpc.secure_channel(host, creds)
+    if username and not password:
+        password = getpass()
+    keycloak = KeyCloak(auth_host=auth_host, cert=cert)
+    persistent_token = PersistentAccessToken(keycloak, username, password, jwt_file)
 
-    if jwt_file:
-        try:
-            access_token = open(jwt_file).read()
-        except Exception as e:
-            print("Error reading jwt file: %s" % e)
-    else:
-        if username and not password:
-            password = getpass()
-        keycloak = KeyCloak(auth_host=auth_host, cert=cert)
-        access_token = keycloak.login(username, password)["access_token"]
+    try:
+        access_token = persistent_token.get_token()
+    except Exception as e:
+        print(e)
+        sys.exit(1)
 
-    print("Using access_token: %s" % access_token)
+    print(f"Using access_token: {access_token}")
 
-    with channel as ctx:
+    with grpc_channel as ctx:
         tts = TextToSpeechStub(ctx)
 
         if format == "pcm":
@@ -276,7 +293,7 @@ def text_to_speech(
             with stream:
                 print("Synthesizing and instantly playing back speech...")
                 for response in tts.synthesize(
-                    TtsRequest(
+                    TextToSpeechRequest(
                         text=" ".join(speech),
                         language=language,
                         audio_format=AudioFormat(
@@ -291,7 +308,9 @@ def text_to_speech(
                         ("port", port),
                     ],
                 ):
-                    print(f"Received audio chunk #{count} ({len(response.audio)} bytes)")
+                    print(
+                        f"Received audio chunk #{count} ({len(response.audio)} bytes)"
+                    )
                     audio_fifo.put(np.frombuffer(response.audio, dtype=np.int16))
                     if out:
                         # Buffer the speech only if it should be saved into a file
@@ -310,9 +329,10 @@ def text_to_speech(
             # received.
             print("Synthesizing speech...")
             for response in tts.synthesize(
-                TtsRequest(
+                TextToSpeechRequest(
                     text=" ".join(speech),
                     language=language,
+                    speech_rate=speech_rate,
                     audio_format=AudioFormat(
                         encoding=AUDIO_FORMATS[format], samplerate=samplerate
                     ),

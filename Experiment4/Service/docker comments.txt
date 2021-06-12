@@ -1,2 +1,11 @@
-docker build -t --dns 8.8.8.8 elgservicetexttotext:v1 .
-docker run –p 50082:50082 --rm –ti elgservicetexttotext:v1 /bin/bash
+//Here to build the proto
+python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. modelTextoText.proto
+
+// Here to build the docker
+docker build -t elgservicetexttotext:v1 .
+docker run -d -p 8061:8061 elgservicetexttotext:v1
+
+
+#push do docker hub
+docker tag 935a433b971f serkanali/elgservicetexttotext:texttottext
+docker push serkanali/elgservicetexttotext:texttottext

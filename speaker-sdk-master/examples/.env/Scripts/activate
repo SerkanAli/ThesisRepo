@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="E:\Users\nerka\Dokumente\Thesis\Interoperability_Thesis\speaker-sdk-master\examples\.env"
+VIRTUAL_ENV="E:\Users\nerka\Dokumente\Thesis\InteroperabilityExperiments\ThesisRepo\speaker-sdk-master\examples\.env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x19speaker_sdk/speaker.proto\x12\rspeaker.beta2\x1a\x1cgoogle/protobuf/struct.proto\"\xa0\x01\n\x0b\x41udioFormat\x12\x35\n\x08\x65ncoding\x18\x01 \x01(\x0e\x32#.speaker.beta2.AudioFormat.Encoding\x12\x12\n\nsamplerate\x18\x02 \x01(\r\"F\n\x08\x45ncoding\x12\x1c\n\x18\x41UDIO_FORMAT_UNSPECIFIED\x10\x00\x12\t\n\x05PCM16\x10\x01\x12\x07\n\x03WAV\x10\x02\x12\x08\n\x04\x46LAC\x10\x03\"\x9f\x02\n\x18SpeechRecognitionRequest\x12@\n\x06\x63onfig\x18\x01 \x01(\x0b\x32..speaker.beta2.SpeechRecognitionRequest.ConfigH\x00\x12\x0f\n\x05\x61udio\x18\x02 \x01(\x0cH\x00\x1a\xa6\x01\n\x06\x43onfig\x12\x10\n\x08language\x18\x01 \x01(\t\x12\x0e\n\x06\x66lavor\x18\x02 \x01(\t\x12\x30\n\x0c\x61udio_format\x18\x03 \x01(\x0b\x32\x1a.speaker.beta2.AudioFormat\x12\x1c\n\x14intermediate_results\x18\x04 \x01(\x08\x12\x1b\n\x13multiple_utterances\x18\x05 \x01(\x08\x12\r\n\x05\x64\x65\x62ug\x18\x0f \x01(\x08\x42\x07\n\x05input\"\x93\x02\n\nTranscript\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x1a\n\x12utterance_finished\x18\x02 \x01(\x08\x12?\n\x0eword_alignment\x18\x03 \x03(\x0b\x32\'.speaker.beta2.Transcript.WordAlignment\x12+\n\ndebug_info\x18\x0f \x01(\x0b\x32\x17.google.protobuf.Struct\x1am\n\rWordAlignment\x12\x0c\n\x04word\x18\x01 \x01(\t\x12\x12\n\nconfidence\x18\x02 \x01(\x02\x12\r\n\x05start\x18\x03 \x01(\x02\x12\x0e\n\x06length\x18\x04 \x01(\x02\x12\x1b\n\x13original_transcript\x18\x05 \x01(\t\"\x9c\x01\n\x0f\x44ialogueRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x0f\n\x07tracker\x18\x02 \x01(\x0c\x12\x11\n\tsender_id\x18\x03 \x01(\t\x12\x0e\n\x04text\x18\x04 \x01(\tH\x00\x12(\n\x05\x65vent\x18\x05 \x01(\x0b\x32\x17.google.protobuf.StructH\x00\x12\r\n\x05\x64\x65\x62ug\x18\x0f \x01(\x08\x42\x0f\n\rtext_or_event\"\xf4\x01\n\x10\x44ialogueResponse\x12\x0f\n\x07tracker\x18\x01 \x01(\x0c\x12\x38\n\x06\x65vents\x18\x02 \x03(\x0b\x32(.speaker.beta2.DialogueResponse.EventOut\x12\x11\n\tfollow_up\x18\x03 \x01(\x08\x12+\n\ndebug_info\x18\x0f \x01(\x0b\x32\x17.google.protobuf.Struct\x1aU\n\x08\x45ventOut\x12\x0e\n\x04text\x18\x01 \x01(\tH\x00\x12(\n\x05\x65vent\x18\x02 \x01(\x0b\x32\x17.google.protobuf.StructH\x00\x42\x0f\n\rtext_or_event\"\x91\x01\n\nTtsRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x10\n\x08language\x18\x02 \x01(\t\x12\r\n\x05voice\x18\x03 \x01(\t\x12\x30\n\x0c\x61udio_format\x18\x04 \x01(\x0b\x32\x1a.speaker.beta2.AudioFormat\x12\x13\n\x0bspeech_rate\x18\x05 \x01(\x02\x12\r\n\x05\x64\x65\x62ug\x18\x0f \x01(\x08\"O\n\x11SynthesizedSpeech\x12\r\n\x05\x61udio\x18\x01 \x01(\x0c\x12+\n\ndebug_info\x18\x0f \x01(\x0b\x32\x17.google.protobuf.Struct\"\xbc\x01\n\x0f\x41ssistantConfig\x12\x0b\n\x03key\x18\x01 \x01(\t\x12.\n\x08\x61udio_in\x18\x02 \x01(\x0b\x32\x1a.speaker.beta2.AudioFormatH\x00\x12\x14\n\ntext_query\x18\x03 \x01(\tH\x00\x12-\n\taudio_out\x18\x04 \x01(\x0b\x32\x1a.speaker.beta2.AudioFormat\x12\x0f\n\x07tracker\x18\x05 \x01(\x0c\x12\r\n\x05\x64\x65\x62ug\x18\x0f \x01(\x08\x42\x07\n\x05query\"h\n\x10\x41ssistantRequest\x12\x30\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x1e.speaker.beta2.AssistantConfigH\x00\x12\x12\n\x08\x61udio_in\x18\x02 \x01(\x0cH\x00\x42\x0e\n\x0c\x61ssist_oneof\"\xe2\x02\n\x11\x41ssistantResponse\x12\x0e\n\x06speech\x18\x01 \x01(\x0c\x12\r\n\x05reply\x18\x02 \x01(\t\x12\x12\n\ntranscript\x18\x03 \x01(\t\x12\x16\n\x0estop_recording\x18\x04 \x01(\x08\x12\'\n\x06\x65vents\x18\x05 \x03(\x0b\x32\x17.google.protobuf.Struct\x12<\n\tfollow_up\x18\x06 \x01(\x0e\x32).speaker.beta2.AssistantResponse.FollowUp\x12\x0f\n\x07tracker\x18\x07 \x01(\x0c\x12\x0c\n\x04html\x18\x0c \x01(\t\x12+\n\ndebug_info\x18\x0f \x01(\x0b\x32\x17.google.protobuf.Struct\"O\n\x08\x46ollowUp\x12\x19\n\x15\x46OLLOW_UP_UNSPECIFIED\x10\x00\x12\x11\n\rEXPECT_SPEECH\x10\x01\x12\x15\n\x11\x44IALOGUE_FINISHED\x10\x02\x32i\n\x11SpeechRecognition\x12T\n\ntranscribe\x12\'.speaker.beta2.SpeechRecognitionRequest\x1a\x19.speaker.beta2.Transcript(\x01\x30\x01\x32\\\n\x0f\x44ialogueManager\x12I\n\x06handle\x12\x1e.speaker.beta2.DialogueRequest\x1a\x1f.speaker.beta2.DialogueResponse2[\n\x0cTextToSpeech\x12K\n\nsynthesize\x12\x19.speaker.beta2.TtsRequest\x1a .speaker.beta2.SynthesizedSpeech0\x01\x32\x61\n\x0eVoiceAssistant\x12O\n\x06\x61ssist\x12\x1f.speaker.beta2.AssistantRequest\x1a .speaker.beta2.AssistantResponse(\x01\x30\x01\x62\x06proto3'
+  serialized_pb=b'\n\x19speaker_sdk/speaker.proto\x12\rspeaker.beta2\x1a\x1cgoogle/protobuf/struct.proto\"\xa0\x01\n\x0b\x41udioFormat\x12\x35\n\x08\x65ncoding\x18\x01 \x01(\x0e\x32#.speaker.beta2.AudioFormat.Encoding\x12\x12\n\nsamplerate\x18\x02 \x01(\r\"F\n\x08\x45ncoding\x12\x1c\n\x18\x41UDIO_FORMAT_UNSPECIFIED\x10\x00\x12\t\n\x05PCM16\x10\x01\x12\x07\n\x03WAV\x10\x02\x12\x08\n\x04\x46LAC\x10\x03\"\x8f\x02\n\x18SpeechRecognitionRequest\x12@\n\x06\x63onfig\x18\x01 \x01(\x0b\x32..speaker.beta2.SpeechRecognitionRequest.ConfigH\x00\x12\x0f\n\x05\x61udio\x18\x02 \x01(\x0cH\x00\x1a\x96\x01\n\x06\x43onfig\x12\x10\n\x08language\x18\x01 \x01(\t\x12\x30\n\x0c\x61udio_format\x18\x03 \x01(\x0b\x32\x1a.speaker.beta2.AudioFormat\x12\x1c\n\x14intermediate_results\x18\x04 \x01(\x08\x12\x1b\n\x13multiple_utterances\x18\x05 \x01(\x08\x12\r\n\x05\x64\x65\x62ug\x18\x0f \x01(\x08\x42\x07\n\x05input\"\x93\x02\n\nTranscript\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x1a\n\x12utterance_finished\x18\x02 \x01(\x08\x12?\n\x0eword_alignment\x18\x03 \x03(\x0b\x32\'.speaker.beta2.Transcript.WordAlignment\x12\x1b\n\x13original_transcript\x18\x04 \x01(\t\x12+\n\ndebug_info\x18\x0f \x01(\x0b\x32\x17.google.protobuf.Struct\x1aP\n\rWordAlignment\x12\x0c\n\x04word\x18\x01 \x01(\t\x12\x12\n\nconfidence\x18\x02 \x01(\x02\x12\r\n\x05start\x18\x03 \x01(\x02\x12\x0e\n\x06length\x18\x04 \x01(\x02\"|\n\x0f\x44ialogueRequest\x12\x0f\n\x07tracker\x18\x02 \x01(\x0c\x12\x0e\n\x04text\x18\x04 \x01(\tH\x00\x12(\n\x05\x65vent\x18\x05 \x01(\x0b\x32\x17.google.protobuf.StructH\x00\x12\r\n\x05\x64\x65\x62ug\x18\x0f \x01(\x08\x42\x0f\n\rtext_or_event\"\xf4\x01\n\x10\x44ialogueResponse\x12\x0f\n\x07tracker\x18\x01 \x01(\x0c\x12\x38\n\x06\x65vents\x18\x02 \x03(\x0b\x32(.speaker.beta2.DialogueResponse.EventOut\x12\x11\n\tfollow_up\x18\x03 \x01(\x08\x12+\n\ndebug_info\x18\x0f \x01(\x0b\x32\x17.google.protobuf.Struct\x1aU\n\x08\x45ventOut\x12\x0e\n\x04text\x18\x01 \x01(\tH\x00\x12(\n\x05\x65vent\x18\x02 \x01(\x0b\x32\x17.google.protobuf.StructH\x00\x42\x0f\n\rtext_or_event\"\x9a\x01\n\x13TextToSpeechRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x10\n\x08language\x18\x02 \x01(\t\x12\r\n\x05voice\x18\x03 \x01(\t\x12\x30\n\x0c\x61udio_format\x18\x04 \x01(\x0b\x32\x1a.speaker.beta2.AudioFormat\x12\x13\n\x0bspeech_rate\x18\x05 \x01(\x02\x12\r\n\x05\x64\x65\x62ug\x18\x0f \x01(\x08\"O\n\x11SynthesizedSpeech\x12\r\n\x05\x61udio\x18\x01 \x01(\x0c\x12+\n\ndebug_info\x18\x0f \x01(\x0b\x32\x17.google.protobuf.Struct\"\xbc\x01\n\x0f\x41ssistantConfig\x12\x0b\n\x03key\x18\x01 \x01(\t\x12.\n\x08\x61udio_in\x18\x02 \x01(\x0b\x32\x1a.speaker.beta2.AudioFormatH\x00\x12\x14\n\ntext_query\x18\x03 \x01(\tH\x00\x12-\n\taudio_out\x18\x04 \x01(\x0b\x32\x1a.speaker.beta2.AudioFormat\x12\x0f\n\x07tracker\x18\x05 \x01(\x0c\x12\r\n\x05\x64\x65\x62ug\x18\x0f \x01(\x08\x42\x07\n\x05query\"h\n\x10\x41ssistantRequest\x12\x30\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x1e.speaker.beta2.AssistantConfigH\x00\x12\x12\n\x08\x61udio_in\x18\x02 \x01(\x0cH\x00\x42\x0e\n\x0c\x61ssist_oneof\"\xe2\x02\n\x11\x41ssistantResponse\x12\x0e\n\x06speech\x18\x01 \x01(\x0c\x12\r\n\x05reply\x18\x02 \x01(\t\x12\x12\n\ntranscript\x18\x03 \x01(\t\x12\x16\n\x0estop_recording\x18\x04 \x01(\x08\x12\'\n\x06\x65vents\x18\x05 \x03(\x0b\x32\x17.google.protobuf.Struct\x12<\n\tfollow_up\x18\x06 \x01(\x0e\x32).speaker.beta2.AssistantResponse.FollowUp\x12\x0f\n\x07tracker\x18\x07 \x01(\x0c\x12\x0c\n\x04html\x18\x0c \x01(\t\x12+\n\ndebug_info\x18\x0f \x01(\x0b\x32\x17.google.protobuf.Struct\"O\n\x08\x46ollowUp\x12\x19\n\x15\x46OLLOW_UP_UNSPECIFIED\x10\x00\x12\x11\n\rEXPECT_SPEECH\x10\x01\x12\x15\n\x11\x44IALOGUE_FINISHED\x10\x02\x32i\n\x11SpeechRecognition\x12T\n\ntranscribe\x12\'.speaker.beta2.SpeechRecognitionRequest\x1a\x19.speaker.beta2.Transcript(\x01\x30\x01\x32\\\n\x0f\x44ialogueManager\x12I\n\x06handle\x12\x1e.speaker.beta2.DialogueRequest\x1a\x1f.speaker.beta2.DialogueResponse2d\n\x0cTextToSpeech\x12T\n\nsynthesize\x12\".speaker.beta2.TextToSpeechRequest\x1a .speaker.beta2.SynthesizedSpeech0\x01\x32\x61\n\x0eVoiceAssistant\x12O\n\x06\x61ssist\x12\x1f.speaker.beta2.AssistantRequest\x1a .speaker.beta2.AssistantResponse(\x01\x30\x01\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_struct__pb2.DESCRIPTOR,])
 
@@ -86,8 +86,8 @@ _ASSISTANTRESPONSE_FOLLOWUP = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=2013,
-  serialized_end=2092,
+  serialized_start=1973,
+  serialized_end=2052,
 )
 _sym_db.RegisterEnumDescriptor(_ASSISTANTRESPONSE_FOLLOWUP)
 
@@ -148,35 +148,28 @@ _SPEECHRECOGNITIONREQUEST_CONFIG = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='flavor', full_name='speaker.beta2.SpeechRecognitionRequest.Config.flavor', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='audio_format', full_name='speaker.beta2.SpeechRecognitionRequest.Config.audio_format', index=2,
+      name='audio_format', full_name='speaker.beta2.SpeechRecognitionRequest.Config.audio_format', index=1,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='intermediate_results', full_name='speaker.beta2.SpeechRecognitionRequest.Config.intermediate_results', index=3,
+      name='intermediate_results', full_name='speaker.beta2.SpeechRecognitionRequest.Config.intermediate_results', index=2,
       number=4, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='multiple_utterances', full_name='speaker.beta2.SpeechRecognitionRequest.Config.multiple_utterances', index=4,
+      name='multiple_utterances', full_name='speaker.beta2.SpeechRecognitionRequest.Config.multiple_utterances', index=3,
       number=5, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='debug', full_name='speaker.beta2.SpeechRecognitionRequest.Config.debug', index=5,
+      name='debug', full_name='speaker.beta2.SpeechRecognitionRequest.Config.debug', index=4,
       number=15, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -195,7 +188,7 @@ _SPEECHRECOGNITIONREQUEST_CONFIG = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=350,
-  serialized_end=516,
+  serialized_end=500,
 )
 
 _SPEECHRECOGNITIONREQUEST = _descriptor.Descriptor(
@@ -238,7 +231,7 @@ _SPEECHRECOGNITIONREQUEST = _descriptor.Descriptor(
     fields=[]),
   ],
   serialized_start=238,
-  serialized_end=525,
+  serialized_end=509,
 )
 
 
@@ -278,13 +271,6 @@ _TRANSCRIPT_WORDALIGNMENT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='original_transcript', full_name='speaker.beta2.Transcript.WordAlignment.original_transcript', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -297,8 +283,8 @@ _TRANSCRIPT_WORDALIGNMENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=694,
-  serialized_end=803,
+  serialized_start=707,
+  serialized_end=787,
 )
 
 _TRANSCRIPT = _descriptor.Descriptor(
@@ -331,7 +317,14 @@ _TRANSCRIPT = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='debug_info', full_name='speaker.beta2.Transcript.debug_info', index=3,
+      name='original_transcript', full_name='speaker.beta2.Transcript.original_transcript', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='debug_info', full_name='speaker.beta2.Transcript.debug_info', index=4,
       number=15, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -349,8 +342,8 @@ _TRANSCRIPT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=528,
-  serialized_end=803,
+  serialized_start=512,
+  serialized_end=787,
 )
 
 
@@ -363,42 +356,28 @@ _DIALOGUEREQUEST = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='speaker.beta2.DialogueRequest.key', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='tracker', full_name='speaker.beta2.DialogueRequest.tracker', index=1,
+      name='tracker', full_name='speaker.beta2.DialogueRequest.tracker', index=0,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='sender_id', full_name='speaker.beta2.DialogueRequest.sender_id', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='text', full_name='speaker.beta2.DialogueRequest.text', index=3,
+      name='text', full_name='speaker.beta2.DialogueRequest.text', index=1,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='event', full_name='speaker.beta2.DialogueRequest.event', index=4,
+      name='event', full_name='speaker.beta2.DialogueRequest.event', index=2,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='debug', full_name='speaker.beta2.DialogueRequest.debug', index=5,
+      name='debug', full_name='speaker.beta2.DialogueRequest.debug', index=3,
       number=15, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -421,8 +400,8 @@ _DIALOGUEREQUEST = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=806,
-  serialized_end=962,
+  serialized_start=789,
+  serialized_end=913,
 )
 
 
@@ -465,8 +444,8 @@ _DIALOGUERESPONSE_EVENTOUT = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=1124,
-  serialized_end=1209,
+  serialized_start=1075,
+  serialized_end=1160,
 )
 
 _DIALOGUERESPONSE = _descriptor.Descriptor(
@@ -517,56 +496,56 @@ _DIALOGUERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=965,
-  serialized_end=1209,
+  serialized_start=916,
+  serialized_end=1160,
 )
 
 
-_TTSREQUEST = _descriptor.Descriptor(
-  name='TtsRequest',
-  full_name='speaker.beta2.TtsRequest',
+_TEXTTOSPEECHREQUEST = _descriptor.Descriptor(
+  name='TextToSpeechRequest',
+  full_name='speaker.beta2.TextToSpeechRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='text', full_name='speaker.beta2.TtsRequest.text', index=0,
+      name='text', full_name='speaker.beta2.TextToSpeechRequest.text', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='language', full_name='speaker.beta2.TtsRequest.language', index=1,
+      name='language', full_name='speaker.beta2.TextToSpeechRequest.language', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='voice', full_name='speaker.beta2.TtsRequest.voice', index=2,
+      name='voice', full_name='speaker.beta2.TextToSpeechRequest.voice', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='audio_format', full_name='speaker.beta2.TtsRequest.audio_format', index=3,
+      name='audio_format', full_name='speaker.beta2.TextToSpeechRequest.audio_format', index=3,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='speech_rate', full_name='speaker.beta2.TtsRequest.speech_rate', index=4,
+      name='speech_rate', full_name='speaker.beta2.TextToSpeechRequest.speech_rate', index=4,
       number=5, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='debug', full_name='speaker.beta2.TtsRequest.debug', index=5,
+      name='debug', full_name='speaker.beta2.TextToSpeechRequest.debug', index=5,
       number=15, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -584,8 +563,8 @@ _TTSREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1212,
-  serialized_end=1357,
+  serialized_start=1163,
+  serialized_end=1317,
 )
 
 
@@ -623,8 +602,8 @@ _SYNTHESIZEDSPEECH = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1359,
-  serialized_end=1438,
+  serialized_start=1319,
+  serialized_end=1398,
 )
 
 
@@ -695,8 +674,8 @@ _ASSISTANTCONFIG = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=1441,
-  serialized_end=1629,
+  serialized_start=1401,
+  serialized_end=1589,
 )
 
 
@@ -739,8 +718,8 @@ _ASSISTANTREQUEST = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=1631,
-  serialized_end=1735,
+  serialized_start=1591,
+  serialized_end=1695,
 )
 
 
@@ -828,8 +807,8 @@ _ASSISTANTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1738,
-  serialized_end=2092,
+  serialized_start=1698,
+  serialized_end=2052,
 )
 
 _AUDIOFORMAT.fields_by_name['encoding'].enum_type = _AUDIOFORMAT_ENCODING
@@ -863,7 +842,7 @@ _DIALOGUERESPONSE_EVENTOUT.oneofs_by_name['text_or_event'].fields.append(
 _DIALOGUERESPONSE_EVENTOUT.fields_by_name['event'].containing_oneof = _DIALOGUERESPONSE_EVENTOUT.oneofs_by_name['text_or_event']
 _DIALOGUERESPONSE.fields_by_name['events'].message_type = _DIALOGUERESPONSE_EVENTOUT
 _DIALOGUERESPONSE.fields_by_name['debug_info'].message_type = google_dot_protobuf_dot_struct__pb2._STRUCT
-_TTSREQUEST.fields_by_name['audio_format'].message_type = _AUDIOFORMAT
+_TEXTTOSPEECHREQUEST.fields_by_name['audio_format'].message_type = _AUDIOFORMAT
 _SYNTHESIZEDSPEECH.fields_by_name['debug_info'].message_type = google_dot_protobuf_dot_struct__pb2._STRUCT
 _ASSISTANTCONFIG.fields_by_name['audio_in'].message_type = _AUDIOFORMAT
 _ASSISTANTCONFIG.fields_by_name['audio_out'].message_type = _AUDIOFORMAT
@@ -889,7 +868,7 @@ DESCRIPTOR.message_types_by_name['SpeechRecognitionRequest'] = _SPEECHRECOGNITIO
 DESCRIPTOR.message_types_by_name['Transcript'] = _TRANSCRIPT
 DESCRIPTOR.message_types_by_name['DialogueRequest'] = _DIALOGUEREQUEST
 DESCRIPTOR.message_types_by_name['DialogueResponse'] = _DIALOGUERESPONSE
-DESCRIPTOR.message_types_by_name['TtsRequest'] = _TTSREQUEST
+DESCRIPTOR.message_types_by_name['TextToSpeechRequest'] = _TEXTTOSPEECHREQUEST
 DESCRIPTOR.message_types_by_name['SynthesizedSpeech'] = _SYNTHESIZEDSPEECH
 DESCRIPTOR.message_types_by_name['AssistantConfig'] = _ASSISTANTCONFIG
 DESCRIPTOR.message_types_by_name['AssistantRequest'] = _ASSISTANTREQUEST
@@ -955,12 +934,12 @@ DialogueResponse = _reflection.GeneratedProtocolMessageType('DialogueResponse', 
 _sym_db.RegisterMessage(DialogueResponse)
 _sym_db.RegisterMessage(DialogueResponse.EventOut)
 
-TtsRequest = _reflection.GeneratedProtocolMessageType('TtsRequest', (_message.Message,), {
-  'DESCRIPTOR' : _TTSREQUEST,
+TextToSpeechRequest = _reflection.GeneratedProtocolMessageType('TextToSpeechRequest', (_message.Message,), {
+  'DESCRIPTOR' : _TEXTTOSPEECHREQUEST,
   '__module__' : 'speaker_sdk.speaker_pb2'
-  # @@protoc_insertion_point(class_scope:speaker.beta2.TtsRequest)
+  # @@protoc_insertion_point(class_scope:speaker.beta2.TextToSpeechRequest)
   })
-_sym_db.RegisterMessage(TtsRequest)
+_sym_db.RegisterMessage(TextToSpeechRequest)
 
 SynthesizedSpeech = _reflection.GeneratedProtocolMessageType('SynthesizedSpeech', (_message.Message,), {
   'DESCRIPTOR' : _SYNTHESIZEDSPEECH,
@@ -999,8 +978,8 @@ _SPEECHRECOGNITION = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=2094,
-  serialized_end=2199,
+  serialized_start=2054,
+  serialized_end=2159,
   methods=[
   _descriptor.MethodDescriptor(
     name='transcribe',
@@ -1025,8 +1004,8 @@ _DIALOGUEMANAGER = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=2201,
-  serialized_end=2293,
+  serialized_start=2161,
+  serialized_end=2253,
   methods=[
   _descriptor.MethodDescriptor(
     name='handle',
@@ -1051,15 +1030,15 @@ _TEXTTOSPEECH = _descriptor.ServiceDescriptor(
   index=2,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=2295,
-  serialized_end=2386,
+  serialized_start=2255,
+  serialized_end=2355,
   methods=[
   _descriptor.MethodDescriptor(
     name='synthesize',
     full_name='speaker.beta2.TextToSpeech.synthesize',
     index=0,
     containing_service=None,
-    input_type=_TTSREQUEST,
+    input_type=_TEXTTOSPEECHREQUEST,
     output_type=_SYNTHESIZEDSPEECH,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
@@ -1077,8 +1056,8 @@ _VOICEASSISTANT = _descriptor.ServiceDescriptor(
   index=3,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=2388,
-  serialized_end=2485,
+  serialized_start=2357,
+  serialized_end=2454,
   methods=[
   _descriptor.MethodDescriptor(
     name='assist',

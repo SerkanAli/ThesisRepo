@@ -1,8 +1,9 @@
-FROM ubuntu:16.04
+FROM ubuntu:20.04
 
 RUN apt-get update -y 
 RUN apt-get install -y python3-pip python3-dev 
 RUN pip3 install --upgrade pip
+RUN pip install elg
 
 
 COPY ./requirements.txt /requirements.txt

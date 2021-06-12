@@ -1,0 +1,14 @@
+//Here to build the proto
+python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. modelTextoText.proto
+
+// Here to build the docker
+docker build -t elgservicetexttotext:v1 .
+docker run -d -p 8061:8061 elgservicetexttotext:v1
+
+
+#push do docker hub
+docker tag 14f8c6b8b438 serkanali/elgservicetexttotext:texttottext
+docker push serkanali/elgservicetexttotext:texttottext
+
+
+docker images -f "reference=elgservicetexttotext" --format "{{.ID}}"

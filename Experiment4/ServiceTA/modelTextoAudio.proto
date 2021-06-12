@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+message ELG_Text {
+    string PlainText = 1;
+    string StructuredText = 2;
+}
+
+message ELG_Audio {
+    string type = 1;
+    string content = 2;
+    string format = 3;
+    string features = 4;
+    string annotations = 5;
+
+
+}
+
+message ELG_Parameter {
+    int32 ServiceID = 1;
+}   
+
+message Empty {
+    
+}
+
+service RunElgService {
+    rpc InitParameter(ELG_Parameter) returns (Empty);
+    rpc RunElgService(ELG_Text) returns(ELG_Audio);
+}

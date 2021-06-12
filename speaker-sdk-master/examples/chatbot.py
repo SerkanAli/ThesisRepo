@@ -15,16 +15,18 @@
 from getpass import getpass
 from pathlib import Path
 from pprint import pformat, pprint
-from typing import Text
+from typing import Optional, Text, Union
 
 import click
 import grpc
+import sys
 from google.protobuf.json_format import MessageToDict
-from keycloak_login import KeyCloak
+from keycloak_login import KeyCloak, PersistentAccessToken
 from speaker_sdk.speaker_pb2 import DialogueRequest
 from speaker_sdk.speaker_pb2_grpc import DialogueManagerStub
 
-DEFAULT_HOST = "localhost:50000"
+DEFAULT_HOST = "api.speaker-plattform.de"
+DEFAULT_AUTH_HOST = "https://www.speaker-plattform.de"
 
 
 @click.command()
@@ -36,12 +38,16 @@ DEFAULT_HOST = "localhost:50000"
 )
 @click.option(
     "--jwt-file",
-    default=None,
+    default=Path("certs", "login_data.json"),
     type=click.Path(),
     help="Specify file containing a valid JWT token.",
 )
 @click.option(
-    "-u", "--username", default=None, type=str, help="Username for authentication via KeyCloak"
+    "-u",
+    "--username",
+    default=None,
+    type=str,
+    help="Username for authentication via KeyCloak",
 )
 @click.option(
     "-p",
@@ -51,54 +57,43 @@ DEFAULT_HOST = "localhost:50000"
     help="Password for authentication via KeyCloak. User will be prompted if --user flag was provided but --password was not.",
 )
 @click.option(
-    "--insecure",
-    is_flag=True,
-    help="Accept insecure (unencrypted) incoming connections"
+    "--insecure", is_flag=True, help="Use insecure (unencrypted) outgoing connections",
 )
 @click.option(
-    "--auth_host",
-    default="https://speaker-keycloak.185.128.119.217.xip.io",
+    "--auth-host",
+    default=DEFAULT_AUTH_HOST,
     type=str,
     help="Host of the authentication server.",
 )
 @click.option(
     "--cert",
-    type=click.Path(),
-    default=Path("certs", "server.crt"),
+    type=str,
+    default=None,
     show_default=True,
     help="Location of certificate file",
 )
 @click.option(
-    "--namespace",
-    default=None,
-    type=str,
-    help="Namespace used for direct routing.")
+    "--namespace", default=None, type=str, help="Namespace used for direct routing."
+)
 @click.option(
     "--service",
     default=None,
     type=str,
-    help="Name of the service used for direct routing."
+    help="Name of the service used for direct routing.",
 )
-@click.option(
-    "--port",
-    default="80",
-    type=str,
-    help="Port used for direct routing.")
-@click.option(
-    "--debug",
-    is_flag=True,
-    help="Request debug information from service")
+@click.option("--port", default="80", type=str, help="Port used for direct routing.")
+@click.option("--debug", is_flag=True, help="Request debug information from service")
 def run(
     host: Text,
-    jwt_file: str,
-    username: str,
-    password: str,
+    jwt_file: Text,
+    username: Text,
+    password: Text,
     insecure: bool,
     auth_host: str,
-    cert: str,
-    namespace: str,
-    service: str,
-    port: str,
+    cert: Optional[Text],
+    namespace: Text,
+    service: Text,
+    port: Text,
     debug: bool,
 ) -> None:
     """
@@ -116,22 +111,24 @@ def run(
     if insecure:
         grpc_channel = grpc.insecure_channel(host)
     else:
-        with open(cert, "rb") as f:
-            creds = grpc.ssl_channel_credentials(f.read())
+        if cert:
+            with open(cert, "rb") as f:
+                creds = grpc.ssl_channel_credentials(f.read())
+        else:
+            creds = grpc.ssl_channel_credentials()
+
         grpc_channel = grpc.secure_channel(host, creds)
 
-    access_token = ""
+    if username and not password:
+        password = getpass()
+    keycloak = KeyCloak(auth_host=auth_host, cert=cert)
+    persistent_token = PersistentAccessToken(keycloak, username, password, jwt_file)
 
-    if jwt_file:
-        try:
-            access_token = open(jwt_file).read()
-        except Exception as e:
-            print("Error reading jwt file: %s" % e)
-    else:
-        if username and not password:
-            password = getpass()
-        keycloak = KeyCloak(auth_host=auth_host, cert=cert)
-        access_token = keycloak.login(username, password)["access_token"]
+    try:
+        access_token = persistent_token.get_token()
+    except Exception as e:
+        print(e)
+        sys.exit(1)
 
     print("Using access_token: %s" % access_token)
 

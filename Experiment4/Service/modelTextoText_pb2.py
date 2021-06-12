@@ -11,7 +11,6 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,9 +19,8 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x14modelTextoText.proto\x1a\x1bgoogle/protobuf/empty.proto\"5\n\x08\x45LG_Text\x12\x11\n\tPlainText\x18\x01 \x01(\t\x12\x16\n\x0eStructuredText\x18\x02 \x01(\t\"\"\n\rELG_Parameter\x12\x11\n\tServiceID\x18\x01 \x01(\x05\"\x07\n\x05\x45mpty2o\n\rRunElgService\x12\x37\n\rInitParameter\x12\x0e.ELG_Parameter\x1a\x16.google.protobuf.Empty\x12%\n\rRunElgService\x12\t.ELG_Text\x1a\t.ELG_Textb\x06proto3'
-  ,
-  dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
+  serialized_pb=b'\n\x14modelTextoText.proto\"5\n\x08\x45LG_Text\x12\x11\n\tPlainText\x18\x01 \x01(\t\x12\x16\n\x0eStructuredText\x18\x02 \x01(\t\"\"\n\rELG_Parameter\x12\x11\n\tServiceID\x18\x01 \x01(\x05\x32\x62\n\rRunElgService\x12*\n\rInitParameter\x12\x0e.ELG_Parameter\x1a\t.ELG_Text\x12%\n\rRunElgService\x12\t.ELG_Text\x1a\t.ELG_Textb\x06proto3'
+)
 
 
 
@@ -61,8 +59,8 @@ _ELG_TEXT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=53,
-  serialized_end=106,
+  serialized_start=24,
+  serialized_end=77,
 )
 
 
@@ -93,38 +91,12 @@ _ELG_PARAMETER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=108,
-  serialized_end=142,
-)
-
-
-_EMPTY = _descriptor.Descriptor(
-  name='Empty',
-  full_name='Empty',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=144,
-  serialized_end=151,
+  serialized_start=79,
+  serialized_end=113,
 )
 
 DESCRIPTOR.message_types_by_name['ELG_Text'] = _ELG_TEXT
 DESCRIPTOR.message_types_by_name['ELG_Parameter'] = _ELG_PARAMETER
-DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ELG_Text = _reflection.GeneratedProtocolMessageType('ELG_Text', (_message.Message,), {
@@ -141,13 +113,6 @@ ELG_Parameter = _reflection.GeneratedProtocolMessageType('ELG_Parameter', (_mess
   })
 _sym_db.RegisterMessage(ELG_Parameter)
 
-Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), {
-  'DESCRIPTOR' : _EMPTY,
-  '__module__' : 'modelTextoText_pb2'
-  # @@protoc_insertion_point(class_scope:Empty)
-  })
-_sym_db.RegisterMessage(Empty)
-
 
 
 _RUNELGSERVICE = _descriptor.ServiceDescriptor(
@@ -157,8 +122,8 @@ _RUNELGSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=153,
-  serialized_end=264,
+  serialized_start=115,
+  serialized_end=213,
   methods=[
   _descriptor.MethodDescriptor(
     name='InitParameter',
@@ -166,7 +131,7 @@ _RUNELGSERVICE = _descriptor.ServiceDescriptor(
     index=0,
     containing_service=None,
     input_type=_ELG_PARAMETER,
-    output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    output_type=_ELG_TEXT,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

@@ -22,15 +22,7 @@ setuptools.setup(
     ],
     python_requires=">=3.6",
     install_requires=[
-        "grpcio==1.32.0",
-        "grpcio-tools==1.32.0",
+        "grpcio>=1.36.0",
+        "grpcio-tools>=1.36.0",
     ],
-    extras_require={
-        "tests": [
-            "pytest",
-            "pytest-grpc",
-            "pytest-black",
-            "pytest-cov",
-        ]
-    },
 )

@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+message ELG_Protocol {
+    int32 BeforeServiceID = 1;
+    int32 CurrentServiceID = 2;
+    repeated int32 AfterServicesIDs = 3;
+}
+
+
+message ELG_Text {
+    string PlainText = 1;
+    string StructuredText = 2;
+    ELG_Protocol Protocol = 3;
+}
+
+message ELG_Audio {
+    string type = 1;
+    string content = 2;
+    string format = 3;
+    string features = 4;
+    string annotations = 5;
+    ELG_Protocol Protocol = 6;
+}
+
+message ELG_Parameter {
+    repeated int32 ServiceIDs = 1;
+}   
+
+
+service RunElgService {
+    rpc InitParameter(ELG_Parameter) returns (ELG_Text);
+    rpc RunElgService(ELG_Text) returns(ELG_Audio);
+}

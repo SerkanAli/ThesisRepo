@@ -1,0 +1,28 @@
+https://kubernetes.io/docs/tutorials/hello-minikube/
+
+
+minikube start
+
+kubectl get nodes
+
+kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1
+
+kubectl create deployment kubernetes-bootcamp --image=docker.io/serkanali/elgservicetexttotext:texttottext
+
+kubectl proxy
+
+
+
+
+##################### The following code is for starting the kubernetes from AI4EU
+
+minikube start
+
+python kuber   script deployment
+
+
+kubectl expose deployment elgtesttotext1 --type=LoadBalancer --name=my-service --port=50082
+
+kubectl expose deployment orchestrator --type=LoadBalancer --name=my-service 
+
+minikube service my-service

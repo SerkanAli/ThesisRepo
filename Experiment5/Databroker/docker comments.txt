@@ -1,0 +1,11 @@
+#build proto
+python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. databroker.proto
+
+#Create and run docker image
+docker build -t serkanali/elgservicetexttotext:databroker .
+docker run -d -p 8061:8061 elgdatabroker:v1
+
+#push do docker hub
+docker tag e644d8b84500 serkanali/elgservicetexttotext:databroker
+docker push serkanali/elgservicetexttotext:databroker
+ 

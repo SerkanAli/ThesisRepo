@@ -25,17 +25,22 @@ import grpc
 import numpy as np
 import sounddevice as sd
 import soundfile as sf
+import sys
 from google.protobuf.json_format import MessageToDict
-from keycloak_login import KeyCloak
+from keycloak_login import KeyCloak, PersistentAccessToken
 from speaker_sdk.speaker_pb2 import AudioFormat, SpeechRecognitionRequest
 from speaker_sdk.speaker_pb2_grpc import SpeechRecognitionStub
 
 DEFAULT_LANGUAGE = "en-US"
-DEFAULT_HOST = "localhost:50000"
+DEFAULT_HOST = "api.speaker-plattform.de"
+DEFAULT_AUTH_HOST = "https://www.speaker-plattform.de"
 DEFAULT_SAMPLERATE = 16000
 DEFAULT_CHUNKS_PER_SECOND = 5
 
-CONTENT_TYPE_MAP = {".wav": AudioFormat.Encoding.WAV, ".flac": AudioFormat.Encoding.FLAC}
+CONTENT_TYPE_MAP = {
+    ".wav": AudioFormat.Encoding.WAV,
+    ".flac": AudioFormat.Encoding.FLAC,
+}
 
 
 @click.command()
@@ -86,12 +91,16 @@ CONTENT_TYPE_MAP = {".wav": AudioFormat.Encoding.WAV, ".flac": AudioFormat.Encod
 )
 @click.option(
     "--jwt-file",
-    default=None,
+    default=Path("certs", "login_data.json"),
     type=click.Path(),
     help="Specify file containing a valid JWT token.",
 )
 @click.option(
-    "-u", "--username", default=None, type=str, help="Username for authentication via KeyCloak"
+    "-u",
+    "--username",
+    default=None,
+    type=str,
+    help="Username for authentication via KeyCloak",
 )
 @click.option(
     "-p",
@@ -101,37 +110,31 @@ CONTENT_TYPE_MAP = {".wav": AudioFormat.Encoding.WAV, ".flac": AudioFormat.Encod
     help="Password for authentication via KeyCloak. User will be prompted if --user flag was provided but --password was not.",
 )
 @click.option(
-    "--insecure", is_flag=True, help="Accept insecure (unencrypted) incoming connections"
+    "--insecure", is_flag=True, help="Use insecure (unencrypted) outgoing connections",
 )
 @click.option(
-    "--auth_host",
-    default="https://speaker-keycloak.185.128.119.217.xip.io",
+    "--auth-host",
+    default=DEFAULT_AUTH_HOST,
     type=str,
     help="Host of the authentication server.",
 )
 @click.option(
     "--cert",
-    type=click.Path(),
-    default=Path("certs", "server.crt"),
+    type=str,
+    default=None,
     show_default=True,
     help="Location of certificate file",
 )
 @click.option(
-    "--namespace",
-    default=None,
-    type=str,
-    help="Namespace used for direct routing.")
+    "--namespace", default=None, type=str, help="Namespace used for direct routing."
+)
 @click.option(
     "--service",
     default=None,
     type=str,
-    help="Name of the service used for direct routing."
+    help="Name of the service used for direct routing.",
 )
-@click.option(
-    "--port",
-    default="80",
-    type=str,
-    help="Port used for direct routing.")
+@click.option("--port", default="80", type=str, help="Port used for direct routing.")
 @click.option("--debug", is_flag=True, help="Request debug information from service")
 def live_transcription(
     host: Text,
@@ -157,11 +160,16 @@ def live_transcription(
     recognizer. The final transcript is printed out as well as any intermediate transcripts during
     the recording.
 
-    There is also the possibility of a dry run, where no audio is recorded. These options are
-    only useful to test the speech recognizer mockup or eventually debug connectivity problems.
-    One option is sending dummy values to the speech recognizer.
-    Another possibility is sending an input file. This works only with small file sizes due to the
-    grpc message size limit. Example files are in the folder './cache'.
+    There is also the option to do a dry run, where no audio is recorded but instead dummy
+    data is sent (no real or valid audio data). This option is only useful to test the
+    speech recognizer mockup or eventually debug connectivity problems.
+
+    Another possibility is sending an audio file instead of recording.
+    Example files are located in the folder `/examples/cache`.
+
+    *NOTE*: Usually there is a maximum size of the HTTP request body specified in the server.
+    If the speech recognition requests lasts really long or the file is too big, the server
+    will cancel the call and return a status code of 413 (payload too large).
     """
 
     q: Queue = Queue()
@@ -173,7 +181,9 @@ def live_transcription(
             language=language,
             intermediate_results=True,
             multiple_utterances=multiple_utterances,
-            audio_format=AudioFormat(encoding=AudioFormat.Encoding.PCM16, samplerate=samplerate),
+            audio_format=AudioFormat(
+                encoding=AudioFormat.Encoding.PCM16, samplerate=samplerate
+            ),
             debug=debug,
         )
     )
@@ -206,7 +216,7 @@ def live_transcription(
 
         # then send audio
         k = 0
-        while send_audio:
+        while k < 10:
             yield SpeechRecognitionRequest(audio=b"X" * chunk_size)
             k += 1
             sleep(1.0 / chunks_per_second)
@@ -230,11 +240,6 @@ def live_transcription(
         for k in range(0, len(data), chunk_size):
             yield SpeechRecognitionRequest(audio=data[k : k + chunk_size].tobytes())
 
-        # keep sending silence to trigger endpointing
-        while True:
-            yield SpeechRecognitionRequest(audio=data[k : k + chunk_size].tobytes())
-            sleep(1.0 / chunks_per_second)
-
     def audio_callback(indata, frames, time, status):
         """
         Callback function which is invoked every time a complete audio block is available from the
@@ -245,26 +250,29 @@ def live_transcription(
 
         q.put(indata.copy())
 
+    print(f"Connecting to {host}")
+
     if insecure:
         grpc_channel = grpc.insecure_channel(host)
     else:
-        with open(cert, "rb") as f:
-            creds = grpc.ssl_channel_credentials(f.read())
+        if cert:
+            with open(cert, "rb") as f:
+                creds = grpc.ssl_channel_credentials(f.read())
+        else:
+            creds = grpc.ssl_channel_credentials()
+
         grpc_channel = grpc.secure_channel(host, creds)
 
-    access_token = ""
+    if username and not password:
+        password = getpass()
+    keycloak = KeyCloak(auth_host=auth_host, cert=cert)
+    persistent_token = PersistentAccessToken(keycloak, username, password, jwt_file)
 
-    if jwt_file:
-        try:
-            access_token = open(jwt_file).read()
-        except Exception as e:
-            print("Error reading jwt file: %s" % e)
-    else:
-        if username:
-            if not password:
-                password = getpass()
-            keycloak = KeyCloak(auth_host=auth_host, cert=cert)
-            access_token = keycloak.login(username, password)["access_token"]
+    try:
+        access_token = persistent_token.get_token()
+    except Exception as e:
+        print(e)
+        sys.exit(1)
 
     print("Using access_token: %s" % access_token)
 

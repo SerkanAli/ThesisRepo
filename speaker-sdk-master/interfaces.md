@@ -1,33 +1,34 @@
 # Protocol Documentation
 <a name="top"></a>
 
-# Table of Contents
+## Table of Contents
 
-##  [speaker.proto](#speaker.proto)
-### Services
- - [DialogueManager](#speaker.beta2.DialogueManager)
- - [SpeechRecognition](#speaker.beta2.SpeechRecognition)
- - [TextToSpeech](#speaker.beta2.TextToSpeech)
- - [VoiceAssistant](#speaker.beta2.VoiceAssistant)
-
-### Messages
-  - [AssistantConfig](#speaker.beta2.AssistantConfig)
-  - [AssistantRequest](#speaker.beta2.AssistantRequest)
-  - [AssistantResponse](#speaker.beta2.AssistantResponse)
-  - [AudioFormat](#speaker.beta2.AudioFormat)
-  - [DialogueRequest](#speaker.beta2.DialogueRequest)
-  - [DialogueResponse](#speaker.beta2.DialogueResponse)
-  - [SpeechRecognitionRequest](#speaker.beta2.SpeechRecognitionRequest)
-  - [SpeechRecognitionRequest.Config](#speaker.beta2.SpeechRecognitionRequest.Config)
-  - [SynthesizedSpeech](#speaker.beta2.SynthesizedSpeech)
-  - [Transcript](#speaker.beta2.Transcript)
-  - [Transcript.WordAlignment](#speaker.beta2.Transcript.WordAlignment)
-  - [TtsRequest](#speaker.beta2.TtsRequest)
-
-### Enumerations
-  - [AssistantResponse.FollowUp](#speaker.beta2.AssistantResponse.FollowUp)
-  - [AudioFormat.Encoding](#speaker.beta2.AudioFormat.Encoding)
-
+###  [speaker.proto](#speaker.proto)
+#### Services
+- [DialogueManager](#speaker.beta2.DialogueManager)
+- [SpeechRecognition](#speaker.beta2.SpeechRecognition)
+- [TextToSpeech](#speaker.beta2.TextToSpeech)
+- [VoiceAssistant](#speaker.beta2.VoiceAssistant)
+- [Health Check](#health-check)
+#### Messages
+- [AssistantConfig](#speaker.beta2.AssistantConfig)
+- [AssistantRequest](#speaker.beta2.AssistantRequest)
+- [AssistantResponse](#speaker.beta2.AssistantResponse)
+- [AudioFormat](#speaker.beta2.AudioFormat)
+- [DialogueRequest](#speaker.beta2.DialogueRequest)
+- [DialogueResponse](#speaker.beta2.DialogueResponse)
+- [DialogueResponse.EventOut](#speaker.beta2.DialogueResponse.EventOut)
+- [SpeechRecognitionRequest](#speaker.beta2.SpeechRecognitionRequest)
+- [SpeechRecognitionRequest.Config](#speaker.beta2.SpeechRecognitionRequest.Config)
+- [SynthesizedSpeech](#speaker.beta2.SynthesizedSpeech)
+- [TextToSpeechRequest](#speaker.beta2.TextToSpeechRequest)
+- [Transcript](#speaker.beta2.Transcript)
+- [Transcript.WordAlignment](#speaker.beta2.Transcript.WordAlignment)
+#### Enumerations
+- [AssistantResponse.FollowUp](#speaker.beta2.AssistantResponse.FollowUp)
+- [AudioFormat.Encoding](#speaker.beta2.AudioFormat.Encoding)
+#### Extensions
+#### Types
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -35,14 +36,14 @@
 <a name="speaker.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-# speaker.proto
+## speaker.proto
 
 
-## Services
+### Services
 
 <a name="speaker.beta2.DialogueManager"></a>
 
-### DialogueManager
+#### DialogueManager
 This service handles incoming textual queries from the user or possibly
 other events which may be triggered by some devices.
 
@@ -53,7 +54,7 @@ other events which may be triggered by some devices.
 
 <a name="speaker.beta2.SpeechRecognition"></a>
 
-### SpeechRecognition
+#### SpeechRecognition
 This service provides an interface for recognizing and transcribing speech
 which has been recorded from the user.
 
@@ -64,17 +65,17 @@ which has been recorded from the user.
 
 <a name="speaker.beta2.TextToSpeech"></a>
 
-### TextToSpeech
+#### TextToSpeech
 This service synthesizes speech from a given text.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| synthesize | [TtsRequest](#speaker.beta2.TtsRequest) | [SynthesizedSpeech](#speaker.beta2.SynthesizedSpeech) stream | Synthesize the given text as natural language |
+| synthesize | [TextToSpeechRequest](#speaker.beta2.TextToSpeechRequest) | [SynthesizedSpeech](#speaker.beta2.SynthesizedSpeech) stream | Synthesize the given text as natural language |
 
 
 <a name="speaker.beta2.VoiceAssistant"></a>
 
-### VoiceAssistant
+#### VoiceAssistant
 This is the voice assistant service which provides a single interface to conveniently access all
 the other services during a conversation with the user. It bundles all three regular calls of a
 voice interaction, to the speech recognizer, the dialogue manager and the speech synthesizer,
@@ -113,11 +114,18 @@ no `audio_out` configuration is provided:
 
  <!-- end services -->
 
-## Messages
+#### Health Check
+
+Every service implements the `grpc.health.v1.Health` interface from the [gRPC Health Checking Protocol](https://github.com/grpc/grpc/blob/master/doc/health-checking.md), which can be used to probe whether a server is running and ready to serve.
+
+If the API gateway is called with an empty `HealthCheckRequest.service` field it will return the status for itself.
+If this field is non-empty the API gateway will try to reach out to the specified service and report its status back to the caller.
+
+### Messages
 
 <a name="speaker.beta2.AssistantConfig"></a>
 
-### AssistantConfig
+#### AssistantConfig
 The audio configuration and internal state of the dialogue manager.
 
 **Note:** Only one of the fields `audio_in` or `text_query` may be set at a time.
@@ -139,7 +147,7 @@ The audio configuration and internal state of the dialogue manager.
 
 <a name="speaker.beta2.AssistantRequest"></a>
 
-### AssistantRequest
+#### AssistantRequest
 The top-level message which is sent as a stream from the client to the
 server.
 
@@ -160,7 +168,7 @@ messages have to contain the `audio_in` field.
 
 <a name="speaker.beta2.AssistantResponse"></a>
 
-### AssistantResponse
+#### AssistantResponse
 The top-level message which is returned by the server.
 One or more of these messages are sent to the client as a response, although only individual
 fields may be set.
@@ -185,7 +193,7 @@ fields may be set.
 
 <a name="speaker.beta2.AudioFormat"></a>
 
-### AudioFormat
+#### AudioFormat
 The audio format that is used for the transmitted audio.
 
 
@@ -201,7 +209,7 @@ The audio format that is used for the transmitted audio.
 
 <a name="speaker.beta2.DialogueRequest"></a>
 
-### DialogueRequest
+#### DialogueRequest
 A request containing a textual query from the user or an event which should
 be processed by the dialogue manager.
 The last state to continue from is provided in the `tracker` field.
@@ -211,10 +219,9 @@ The last state to continue from is provided in the `tracker` field.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  | A key for selecting the desired dialogue manager |
-| tracker | [bytes](#bytes) |  | The last dialog state from the previous call. If this is the first call, this field must be left empty. |
-| sender_id | [string](#string) |  | UUID for identifying the user |
+| tracker | [bytes](#bytes) |  | The last dialogue state from the previous call. If this is the first call, this field must be left empty. |
 | text | [string](#string) |  | Textual query from the user |
+| event | [google.protobuf.Struct](#google.protobuf.Struct) |  | A client-specific event |
 | debug | [bool](#bool) |  | True, if debug information for this request should also be returned |
 
 
@@ -224,17 +231,16 @@ The last state to continue from is provided in the `tracker` field.
 
 <a name="speaker.beta2.DialogueResponse"></a>
 
-### DialogueResponse
-The response to the DialogueRequest which in any case contains the current
-dialogue state (`tracker`), possibly a reply (`text`) and/or a list of events and
-a follow up action.
+#### DialogueResponse
+The response to the DialogueRequest which in any case contains the current dialogue state
+(`tracker`), possibly a list of replies (`text`) and events, and a flag indicating whether the
+dialogue manager expects the conversation to continue.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | tracker | [bytes](#bytes) |  | dialogue state after processing the current request |
-| text | [string](#string) |  | textual reply to the request |
-| events | [google.protobuf.Struct](#google.protobuf.Struct) | repeated | A list of client-specific events triggered by the request |
+| events | [DialogueResponse.EventOut](#speaker.beta2.DialogueResponse.EventOut) | repeated | An list of textual replies and custom events |
 | follow_up | [bool](#bool) |  | true, if the service expects further input from the user |
 | debug_info | [google.protobuf.Struct](#google.protobuf.Struct) |  | Debug information needed to reconstruct the request in case of an error. |
 
@@ -243,9 +249,25 @@ a follow up action.
 
 
 
+<a name="speaker.beta2.DialogueResponse.EventOut"></a>
+
+#### DialogueResponse.EventOut
+Wrapper message to enable a list of oneofs.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| text | [string](#string) |  | textual reply to the request |
+| event | [google.protobuf.Struct](#google.protobuf.Struct) |  | A client-specific event triggered by the request |
+
+
+
+
+
+
 <a name="speaker.beta2.SpeechRecognitionRequest"></a>
 
-### SpeechRecognitionRequest
+#### SpeechRecognitionRequest
 Request to transcribe an audio recording of the user.
 
 **Note:** Only one of the fields `config` or `audio` may be set at a time.
@@ -265,14 +287,13 @@ messages have to contain the `audio` field.
 
 <a name="speaker.beta2.SpeechRecognitionRequest.Config"></a>
 
-### SpeechRecognitionRequest.Config
+#### SpeechRecognitionRequest.Config
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | language | [string](#string) |  | The language with which the recognition should be performed |
-| flavor | [string](#string) |  | (Optional) This field is intended for selecting a specialized language model, e.g. to better recognize technical terms |
 | audio_format | [AudioFormat](#speaker.beta2.AudioFormat) |  | Format in which the audio data will be encoded |
 | intermediate_results | [bool](#bool) |  | True, if intermediate transcription results should be returned |
 | multiple_utterances | [bool](#bool) |  | True, if more than one user utterance should be transcribed; on False the recognizer will not transcribe anything after the first utterance is finished |
@@ -285,7 +306,7 @@ messages have to contain the `audio` field.
 
 <a name="speaker.beta2.SynthesizedSpeech"></a>
 
-### SynthesizedSpeech
+#### SynthesizedSpeech
 The synthesized speech; may be a stream of these messages.
 
 
@@ -299,46 +320,9 @@ The synthesized speech; may be a stream of these messages.
 
 
 
-<a name="speaker.beta2.Transcript"></a>
+<a name="speaker.beta2.TextToSpeechRequest"></a>
 
-### Transcript
-Transcribed text from the user's utterance
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| text | [string](#string) |  | Transcription of the recording |
-| utterance_finished | [bool](#bool) |  | Flag indicating whether this is the final recognition result |
-| word_alignment | [Transcript.WordAlignment](#speaker.beta2.Transcript.WordAlignment) | repeated | A list of word WordAlignment messages for each word transcribed |
-| debug_info | [google.protobuf.Struct](#google.protobuf.Struct) |  | Debug information needed to reconstruct the request in case of an error. |
-
-
-
-
-
-
-<a name="speaker.beta2.Transcript.WordAlignment"></a>
-
-### Transcript.WordAlignment
-The word alignment describes the confidence, position and length of a recognized word
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| word | [string](#string) |  | A single word from the transcript (in order of appearance) |
-| confidence | [float](#float) |  | The confidence score for the recognition of this word (between 0 and 1) |
-| start | [float](#float) |  | Start offset of word within the audio recording (in seconds) |
-| length | [float](#float) |  | Length of the word within the audio recording (in seconds) |
-| original_transcript | [string](#string) |  | The transcript hypothesis this word originated from |
-
-
-
-
-
-
-<a name="speaker.beta2.TtsRequest"></a>
-
-### TtsRequest
+#### TextToSpeechRequest
 A request to synthesize a given text as spoken language.
 
 
@@ -355,13 +339,50 @@ A request to synthesize a given text as spoken language.
 
 
 
+
+<a name="speaker.beta2.Transcript"></a>
+
+#### Transcript
+Transcribed text from the user's utterance
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| text | [string](#string) |  | Transcription of the recording |
+| utterance_finished | [bool](#bool) |  | Flag indicating whether this is the final recognition result |
+| word_alignment | [Transcript.WordAlignment](#speaker.beta2.Transcript.WordAlignment) | repeated | A list of word WordAlignment messages for each word transcribed |
+| original_transcript | [string](#string) |  | The transcript hypothesis before post-processing |
+| debug_info | [google.protobuf.Struct](#google.protobuf.Struct) |  | Debug information needed to reconstruct the request in case of an error. |
+
+
+
+
+
+
+<a name="speaker.beta2.Transcript.WordAlignment"></a>
+
+#### Transcript.WordAlignment
+The word alignment describes the confidence, position and length of a recognized word
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| word | [string](#string) |  | A single word from the transcript (in order of appearance) |
+| confidence | [float](#float) |  | The confidence score for the recognition of this word (between 0 and 1) |
+| start | [float](#float) |  | Start offset of word within the audio recording (in seconds) |
+| length | [float](#float) |  | Length of the word within the audio recording (in seconds) |
+
+
+
+
+
  <!-- end messages -->
 
-## Enums
+### Enums
 
 <a name="speaker.beta2.AssistantResponse.FollowUp"></a>
 
-### AssistantResponse.FollowUp
+#### AssistantResponse.FollowUp
 This enum describes the possible continuation of the dialogue.
 
 | Name | Number | Description |
@@ -374,14 +395,15 @@ This enum describes the possible continuation of the dialogue.
 
 <a name="speaker.beta2.AudioFormat.Encoding"></a>
 
-### AudioFormat.Encoding
+#### AudioFormat.Encoding
 This field describes the encoding of the incoming or outgoing audio data for the respective request.
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | AUDIO_FORMAT_UNSPECIFIED | 0 | Field not set |
-| WAV | 1 | RIFF WAVE |
-| FLAC | 2 | Free Lossless Audio Codec (https://xiph.org/flac/) |
+| PCM16 | 1 | Raw audio data stream as signed 16-bit integer, little endian |
+| WAV | 2 | RIFF WAVE |
+| FLAC | 3 | Free Lossless Audio Codec (https://xiph.org/flac/) |
 
 
  <!-- end enums -->
@@ -390,8 +412,7 @@ This field describes the encoding of the incoming or outgoing audio data for the
 
 
 
-## Scalar Value Types
-
+### Scalar Value Types
 | .proto Type | Notes | C++ | Java | Python | Go | C# | PHP | Ruby |
 | ----------- | ----- | --- | ---- | ------ | -- | -- | --- | ---- |
 | <a name="double" /> double |  | double | double | float | float64 | double | float | Float |

@@ -14,13 +14,15 @@
 # ***************************************************************************
 import click
 import requests
+import sys
 from getpass import getpass
 from pathlib import Path
 from pprint import pformat, pprint
 from typing import Text
 from prettytable import PrettyTable
 
-from keycloak_login import KeyCloak
+from keycloak_login import KeyCloak, PersistentAccessToken
+
 
 @click.command()
 @click.option(
@@ -31,12 +33,16 @@ from keycloak_login import KeyCloak
 )
 @click.option(
     "--jwt-file",
-    default=None,
+    default=Path("certs", "login_data.json"),
     type=click.Path(),
     help="Specify file containing a valid JWT token.",
 )
 @click.option(
-    "-u", "--username", default=None, type=str, help="Username for authentication via KeyCloak"
+    "-u",
+    "--username",
+    default=None,
+    type=str,
+    help="Username for authentication via KeyCloak",
 )
 @click.option(
     "-p",
@@ -46,7 +52,7 @@ from keycloak_login import KeyCloak
     help="Password for authentication via KeyCloak. User will be prompted if --user flag was provided but --password was not.",
 )
 @click.option(
-    "--auth_host",
+    "--auth-host",
     default="https://speaker-keycloak.185.128.119.217.xip.io",
     type=str,
     help="Host of the authentication server.",
@@ -59,12 +65,7 @@ from keycloak_login import KeyCloak
     help="Location of certificate file",
 )
 def run(
-    host: Text,
-    jwt_file: str,
-    username: str,
-    password: str,
-    auth_host: str,
-    cert: str,
+    host: Text, jwt_file: str, username: str, password: str, auth_host: str, cert: str,
 ) -> None:
     """
     Prints a list of services accessible to the logged in user.
@@ -72,18 +73,16 @@ def run(
 
     print(f"Connecting to {host}")
 
-    access_token = ""
+    if username and not password:
+        password = getpass()
+    keycloak = KeyCloak(auth_host=auth_host, cert=cert)
+    persistent_token = PersistentAccessToken(keycloak, username, password, jwt_file)
 
-    if jwt_file:
-        try:
-            access_token = open(jwt_file).read()
-        except Exception as e:
-            print("Error reading jwt file: %s" % e)
-    else:
-        if username and not password:
-            password = getpass()
-        keycloak = KeyCloak(auth_host=auth_host, cert=cert)
-        access_token = keycloak.login(username, password)["access_token"]
+    try:
+        access_token = persistent_token.get_token()
+    except Exception as e:
+        print(e)
+        sys.exit(1)
 
     print("Using access_token: %s" % access_token)
 
@@ -96,12 +95,15 @@ def run(
         response = requests.post(request_url, headers=headers)
     response_data = response.json()
 
-    asr_services = [[],[],[]]
-    dm_services =  [[],[]]
-    tts_services =  [[],[],[]]
+    asr_services = [[], [], []]
+    dm_services = [[], []]
+    tts_services = [[], [], []]
 
     for entry in response_data:
-        if "component" in entry["metadata"]["labels"]:
+        from pprint import pprint
+
+        pprint(entry)
+        if entry["metadata"]["labels"] and "component" in entry["metadata"]["labels"]:
             if entry["metadata"]["labels"]["component"] == "asr":
                 asr_services[0].append(entry["metadata"]["namespace"])
                 asr_services[1].append(entry["metadata"]["name"])
@@ -137,6 +139,7 @@ def run(
     print("\n")
     print("TTS services:")
     print(tts_table)
+
 
 if __name__ == "__main__":
     run()

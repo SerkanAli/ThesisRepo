@@ -9,21 +9,24 @@ import modelTextoText_pb2
 import modelTextoText_pb2_grpc
 
 
-port = 50082
-ServiceID = -1
+port = 8061
+ServiceID = 515
 
-class RunElgServiceServicer(modelTextoText_pb2_grpc.RunElgServiceServicer):
+class RunElgServiceServicer():
     def InitParameter(self, request,context):
         global ServiceID
-        response = modelTextoText_pb2.Empty()
+        response = modelTextoText_pb2.ELG_Text()
         ServiceID = request.ServiceID
         print("Service ID is:", ServiceID)
+        response.PlainText = "Everything OK"
         return response
 
     def RunElgService(self, request,context):
+        global ServiceID
         response = modelTextoText_pb2.ELG_Text()
         auth = Authentication.from_json('authJSONFile')
-        lt = Service.from_id(ServiceID, auth)
+        ServiceID = 515
+        lt = Service.from_id(ServiceID,auth)
         result = lt(request.PlainText)
         print(result['response']['annotations'])
         response.PlainText = json.dumps(result)
@@ -35,10 +38,10 @@ class RunElgServiceServicer(modelTextoText_pb2_grpc.RunElgServiceServicer):
 def SomeTesting():
     newService = RunElgServiceServicer()
     newParam = modelTextoText_pb2.ELG_Parameter()
-    newParam.ServiceID = 515
+   # newParam.ServiceID = 515
     newService.InitParameter(newParam, 'bla')
     newReq = modelTextoText_pb2.ELG_Text()
-    newReq.PlainText = 'Hello World. How are you today?'
+    newReq.PlainText = 'Hello World today'
     newService.RunElgService(newReq, 'bla')
 
 
